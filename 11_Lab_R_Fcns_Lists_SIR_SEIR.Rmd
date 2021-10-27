@@ -1,0 +1,138 @@
+---
+title: 'Lab 7: More Practice with Functions in R and Returning Lists'
+subtitle: "STAT 244NF: Infectious Disease Modeling"
+author: "YOUR NAME HERE"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+```
+
+In the last lab, we were introduced to writing functions in R, and we wrote a function to simulate data from the SIS model, which we called `SIS_simulation`. Today, we are going to write several other functions, building on what we have learned so far. One key difference is that we are going to work on returning a list (which could include a data frame, reproductive number, etc.) This will be useful if you want to return multiple pieces of information from your function.
+
+Today, we will be working with the SIR and the SEIR model. 
+
+## SIR model
+
+The difference equations are given below:
+
+$$
+S_t=S_{t-1}-\lambda_tS_{t-1}
+$$
+$$
+I_t=I_{t-1}+\lambda_tS_{t-1}-\rho I_{t-1}
+$$
+$$
+R_t=R_{t-1}+\rho I_{t-1}\\
+$$
+
+### Exercise 1 (Review)
+
+Write a function to simulate from an SIR model. Call it `SIR_simulation`. 
+
+- It should take in the following variables: N (population size), I0 (initial number of infected individuals), R0 (initial number of recovered individuals), R_0 (the basic reproductive number), D (infectious duration), and time. 
+- It should return a data frame with three columns: time, compartment, and count.
+
+```{r}
+
+```
+
+Test your function for the following values: N=1000, I0=1, R0=0, R_0=2, D=2 days, time=28 days. Make sure that your function returns a data frame that seems reasonable. It is easiest to do this by plotting your results.
+
+```{r}
+
+```
+
+
+### Exercise 2
+
+It can be useful to return more than just a data frame from a function. For instance, we may want to return a data frame that contains information on our SIR model, the time point when we have the largest number of infectious individuals, and the herd immunity threshold (which is $1-\frac{1}{R_0}$). The reason we want to do this is that we want to explore the relationship between the time point when we have the largest number of infectious individuals and the herd immunity threshold in the context of our simulation. We can achieve this by returning a list. In a moment we are going to modify our function from Exercise 1 to make it return a list (described below). Before we do that, it is useful to play around with lists a little bit. Run the following code to see how lists work:
+
+```{r}
+## make a list with two arguments, x and y:
+list(x=5, y=6)
+```
+```{r}
+## save our list so we can play with it
+list1 <- list(x=5, y=6)
+list1
+##access the element named x in the list
+list1$x 
+##access the element named y in the list
+list1$y
+```
+```{r}
+test_df <- data.frame(x=0:3, y=1:4)
+list2 <- list(df=test_df, time=5)
+list2
+## access the element named df in the list
+list2$df
+## access the element named time in the list
+list2$time
+```
+
+Now, modify your SIR_simulation function so that it (a) finds the time point when we have the largest number of infectious individuals, and calculates the herd immunity threshold and (b) returns a list that contains your data frame (what you already returned), the time point when we have the largest number of infectious individuals, and the herd immunity threshold. In your list, you can name these pieces comp_df, max_time, and HIT, respectively.
+
+```{r}
+
+```
+
+You can add horizontal and vertical lines to a plot by adding the layers `geom_hline` and `geom_vline`, respectively. Add a horizontal line at the herd immunity threshold and a vertical line at the max_time. What do you notice?
+
+```{r}
+
+```
+
+
+## SEIR model
+
+The difference equations are given below:
+
+$$
+S_t=S_{t-1}-\lambda_tS_{t-1}
+$$
+$$
+E_t=E_{t-1}+\lambda_tS_{t-1}-\pi E_{t-1}
+$$
+$$
+I_t=I_{t-1}+\pi E_{t-1}-\rho I_{t-1}
+$$
+$$
+R_t=R_{t-1}+\rho I_{t-1}
+$$
+$E_t$ is the number of people in the pre-infectious compartment at time $t$; $\pi$ is the proportion of individuals that become infectious by time $t$, so $\pi E_{t-1}$ people leave the pre-infectious compartment and enter the infectious compartment. The parameter $\pi$ is related to the latent (pre-infectious) period: $\pi=\frac{1}{D'}$. 
+
+The formulation of $\lambda_t$ is the same as in the SIR model -- it still depends on the proportion of infectious individuals in the population.
+
+### Exercise 3 (Review)
+
+Write a function to simulate from an SEIR model. Call it `SEIR_simulation`. 
+
+- It should take in the following variables: N (population size), E0 (initial number of exposed individuals), I0 (initial number of infected individuals), R0 (initial number of recovered individuals), R_0 (the basic reproductive number), pD (pre-infectious duration), D (infectious duration), and time. 
+- It should return a data frame with three columns: time, compartment, and count.
+
+```{r}
+
+```
+
+Test your function for the following values: N=1000, E0=0, I0=1, R0=0, R_0=2, pD=2 days, D=2 days, time=28 days. Make sure that your function returns a data frame that seems reasonable. It is easiest to do this by plotting your results.
+
+```{r}
+
+```
+
+If we compare these results those from the SIR model, the only difference here is that we have added a pre-infectious period of 2 days. How does adding the E compartment influence the I curve?
+
+### Exercise 4 (time-permitting)
+
+R (more specifically ggplot2) chooses a default ordering and placement for the plot legend(s). However, you can control pieces of this. Read this [resource](http://www.cookbook-r.com/Graphs/Legends_(ggplot2)/) from Cookbook for R and modify your legend. You can start with changing the order of the compartments so they show up in the same ordering as they do in the model (rather than in alphabetical order). If you have more time, focus on making your plot as presentation ready as possible (readable, well organized, etc.)
+
+```{r}
+
+```
+
+
